@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 const PORT = process.env.PORT || 3000;
+const HOST = "0.0.0.0";
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
@@ -17,7 +18,6 @@ const root = __dirname;
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
 
-  // ── API ──
   if (url.pathname === "/api/health") {
     return json(res, 200, {
       status: "ok",
@@ -28,10 +28,8 @@ const server = http.createServer((req, res) => {
     });
   }
 
-  // ── Static ──
   let filePath = path.join(root, url.pathname === "/" ? "/index.html" : url.pathname);
 
-  // Prevent path traversal
   if (!filePath.startsWith(root)) {
     return send(res, 403, "Forbidden");
   }
@@ -56,6 +54,16 @@ function send(res, status, msg) {
   res.end(msg);
 }
 
-server.listen(PORT, () => {
-  console.log(`Abasthan test server → http://localhost:${PORT}`);
+server.listen(PORT, HOST, () => {
+  console.log(`Abasthan test server → http://0.0.0.0:${PORT}`);
+  // Keep the process alive for the platform's port discovery
+  console.log(`Server ready, PID=${process.pid}`);
 });
+
+server.on("error", (err) => {
+  console.error("Server error:", err.message);
+  process.exit(1);
+});
+
+// Keepalive to prevent event loop from emptying before platform detects port
+setInterval(() => {}, 60000);
