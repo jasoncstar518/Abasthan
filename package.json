@@ -1,0 +1,16 @@
+{
+  "name": "abasthan-test",
+  "version": "1.0.0",
+  "description": "Minimal Node.js static test page for Abasthan",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": ["static", "test", "nodejs", "express"],
+  "author": "Jason",
+  "license": "MIT"
+}
